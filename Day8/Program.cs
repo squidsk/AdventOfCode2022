@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Day8
 {
@@ -26,7 +27,8 @@ namespace Day8
 
 		static void Part1(string filename) {
 			using(StringReader reader = new StringReader(File.ReadAllText(filename))){
-				// TODO: Implement Functionality Here
+				String[] line = File.ReadLines(filename).ToArray();
+				int[][] forest = new int[line.Length+2][];
 
 				Console.WriteLine("The solution to Part 1 with inputfile: {0} is: {1}", filename, "Put solution here!");
 			}
