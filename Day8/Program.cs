@@ -36,7 +36,7 @@ namespace Day8
             Part1("test.txt");
             Part1("input.txt");
             Part2("test.txt");
-            //Part2("input.txt");
+            Part2("input.txt");
 
             Console.Write("Press any key to continue . . . ");
             Console.ReadKey(true);
@@ -151,23 +151,42 @@ namespace Day8
                             if(forest[i][k] >= forest[i][k+1]) treesVisible[i][j].left += 1;
                             k -= 1;
                         }
-                        
-                        
-                    }
-                }
-                
-                int maxViewability = 0;
-                for(int i = 1; i < maxPos; i += 1) {
-                    for(int j = 1; j < maxPos; j += 1) {
-                        int viewability = treesVisible[i][j].left * treesVisible[i][j].up * treesVisible[i][j].down * treesVisible[i][j].right;
-                        if(viewability > maxViewability) {
-                            Console.WriteLine("New maximum ({2}) found at {0}, {1}",i, j, viewability);
-                            maxViewability = viewability;
+                        k = j-2;
+                        treesVisible[j][i].up = 1;
+                        while(k >= 0 && forest[k+1][i] < forest[j][i]){
+                        	if(forest[k][i] >= forest[k+1][i]) treesVisible[j][i].up += 1;
+                        	k -= 1;
+                        }
+                        k = 2;
+                        treesVisible[i][maxPos-j].right = 1;
+                        while(k <= j && forest[i][maxPos-j+k-1] < forest[i][maxPos-j]){
+                        	if(forest[i][maxPos-j+k] >= forest[i][maxPos-j+k-1]) treesVisible[i][maxPos-j].right += 1;
+                        	k += 1;
+                        }
+                        k = 2;
+                        treesVisible[maxPos-j][i].down = 1;
+                        while(k <= j && forest[maxPos-j+k-1][i] < forest[maxPos-j][i]){
+                        	if(forest[maxPos-j+k][i] >= forest[maxPos-j+k-1][i]) treesVisible[maxPos-j][i].down += 1;
+                        	k += 1;
                         }
                     }
                 }
                 
-                Console.WriteLine("The solution to Part 2 with inputfile: {0} is: {1}", filename, maxViewability);
+                int maxViewability = 0;
+                int maxI=0, maxJ=0;
+                for(int i = 1; i < maxPos; i += 1) {
+                    for(int j = 1; j < maxPos; j += 1) {
+                        int viewability = treesVisible[i][j].left * treesVisible[i][j].up * treesVisible[i][j].down * treesVisible[i][j].right;
+                        if(viewability > maxViewability) {
+                            //Console.WriteLine("New maximum ({2}) found at {0}, {1}",i, j, viewability);
+                            maxViewability = viewability;
+                            maxI = i;
+                            maxJ = j;
+                        }
+                    }
+                }
+                
+                Console.WriteLine("The solution to Part 2 with inputfile: {0} is: {1} at position ({2},{3})", filename, maxViewability, maxI, maxJ);
             }
         }
     }
