@@ -139,35 +139,27 @@ namespace Day8
                 
                 int maxPos = forest.Length - 1;
                 for(int i = 1; i < maxPos; i += 1) {
-                    //treesVisible[i][1].left = treesVisible[1][i].up = treesVisible[i][maxPos-1].right = treesVisible[maxPos-1][i].down = 1;
                     for(int j = 1; j < maxPos; j += 1) {
-                        //treesVisible[i][j].left = forest[i][j-1] > forest[i][j-2] ? 1 : treesVisible[i][j-1].left + 1;
-                        //treesVisible[j][i].up = forest[j-1][i] > forest[j-2][i] ? 1 : treesVisible[j-1][i].up + 1;
-                        //treesVisible[i][maxPos-j].right = forest[i][maxPos-j+1] > forest[i][maxPos-j+2] ? 1 : treesVisible[i][maxPos-j+1].right + 1;
-                        //treesVisible[maxPos-j][i].down = forest[maxPos-j+1][i] > forest[maxPos-j+2][i] ? 1 : treesVisible[maxPos-j+1][i].down + 1;
-                        int k = j-2;
+                        int k;
+                        
                         treesVisible[i][j].left = 1;
-                        while(k >= 0 && forest[i][k+1] < forest[i][j]){
-                            if(forest[i][k] >= forest[i][k+1]) treesVisible[i][j].left += 1;
-                            k -= 1;
+                        for(k = j - 2; k >= 0 && forest[i][k+1] < forest[i][j]; k -= 1) {
+                            treesVisible[i][j].left += 1;
                         }
-                        k = j-2;
-                        treesVisible[j][i].up = 1;
-                        while(k >= 0 && forest[k+1][i] < forest[j][i]){
-                        	if(forest[k][i] >= forest[k+1][i]) treesVisible[j][i].up += 1;
-                        	k -= 1;
+                        
+                        treesVisible[i][j].up = 1;
+                        for(k = i - 2; k >= 0 && forest[k+1][j] < forest[i][j]; k -= 1) {
+                            treesVisible[i][j].up += 1;
                         }
-                        k = 2;
-                        treesVisible[i][maxPos-j].right = 1;
-                        while(k <= j && forest[i][maxPos-j+k-1] < forest[i][maxPos-j]){
-                        	if(forest[i][maxPos-j+k] >= forest[i][maxPos-j+k-1]) treesVisible[i][maxPos-j].right += 1;
-                        	k += 1;
+                        
+                        treesVisible[i][j].right = 1;
+                        for(k = j + 2; k <= maxPos && forest[i][k-1] < forest[i][j]; k += 1){
+                            treesVisible[i][j].right += 1;
                         }
-                        k = 2;
-                        treesVisible[maxPos-j][i].down = 1;
-                        while(k <= j && forest[maxPos-j+k-1][i] < forest[maxPos-j][i]){
-                        	if(forest[maxPos-j+k][i] >= forest[maxPos-j+k-1][i]) treesVisible[maxPos-j][i].down += 1;
-                        	k += 1;
+                        
+                        treesVisible[i][j].down = 1;
+                        for(k = i + 2; k <= maxPos && forest[k-1][j] < forest[i][j]; k += 1){
+                            treesVisible[i][j].down += 1;
                         }
                     }
                 }
@@ -178,7 +170,6 @@ namespace Day8
                     for(int j = 1; j < maxPos; j += 1) {
                         int viewability = treesVisible[i][j].left * treesVisible[i][j].up * treesVisible[i][j].down * treesVisible[i][j].right;
                         if(viewability > maxViewability) {
-                            //Console.WriteLine("New maximum ({2}) found at {0}, {1}",i, j, viewability);
                             maxViewability = viewability;
                             maxI = i;
                             maxJ = j;
