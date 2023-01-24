@@ -39,7 +39,7 @@ namespace Day9
         #endregion
         
         public bool isAdjacent(Point other) {
-            return ((X - other.X) <= 1) && ((Y - other.Y) <= 1);
+            return (Math.Abs(X - other.X) <= 1) && (Math.Abs(Y - other.Y) <= 1);
         }
     }
     
@@ -47,9 +47,10 @@ namespace Day9
     {
         public static void Main(string[] args) {
             Part1("test.txt");
-            //Part1("input.txt");
-            //Part2("test.txt");
-            //Part2("input.txt");
+            Part1("input.txt");
+            Part2("test.txt");
+            Part2("test2.txt");
+            Part2("input.txt");
 
             Console.Write("Press any key to continue . . . ");
             Console.ReadKey(true);
@@ -61,14 +62,13 @@ namespace Day9
             HashSet<Point> pointsVisited = new HashSet<Point>();
             
             pointsVisited.Add(new Point());
-            Console.Out.WriteLine("Staring Points: Head is at ({0},{1}), Tail is at ({2},{3})", head.X, head.Y, tail.X, tail.Y);
             
             using(StringReader reader = new StringReader(File.ReadAllText(filename))) {
                 while(reader.Peek() != -1) {
                     string[] lineParts = reader.ReadLine().Split();
                     char direction = lineParts[0][0];
                     int distance = int.Parse(lineParts[1]);
-                    Console.WriteLine("Moving in the direction: {0}, for a distance of: {1}", direction, distance);
+
                     moveRope(head, tail, direction, distance, pointsVisited);
                 }
 
@@ -97,18 +97,59 @@ namespace Day9
                         else tail.Y -= 1;
                     }
                     pointsVisited.Add(new Point(tail.X, tail.Y));
-                } else {
-                    Console.WriteLine("Head and tail are adjacent");
                 }
-                Console.Out.WriteLine("Head is at ({0},{1}), Tail is at ({2},{3})", head.X, head.Y, tail.X, tail.Y);
+            }
+        }
+        
+        static void moveRope(Point[] points, char direction, int distance, HashSet<Point> pointsVisited) {
+            for(;distance > 0; distance -= 1) {
+                switch (direction) {
+                        case 'R': points[0].Y += 1; break;
+                        case 'L': points[0].Y -= 1; break;
+                        case 'D': points[0].X -= 1; break;
+                        case 'U': points[0].X += 1; break;
+                        default: break;
+                }
+                
+                Point p1, p2;
+                for (int i = 0; i < 9; i++) {
+                    p1 = points[i];
+                    p2 = points[i+1];
+                    
+                    if(!p1.isAdjacent(p2)) {
+                        if(p1.X - p2.X != 0){
+                            if(p1.X > p2.X) p2.X += 1;
+                            else p2.X -= 1;
+                        }
+                        if(p1.Y - p2.Y != 0) {
+                            if(p1.Y > p2.Y) p2.Y += 1;
+                            else p2.Y -= 1;
+                        }
+                    }
+                }
+                pointsVisited.Add(new Point(points[9].X, points[9].Y));
             }
         }
         
         static void Part2(string filename) {
+            Point[] points = new Point[10];
+            HashSet<Point> pointsVisited = new HashSet<Point>();
+            
+            pointsVisited.Add(new Point());
+            for (int i = 0; i < 10; i++) {
+                points[i] = new Point();
+            }
+            
             using(StringReader reader = new StringReader(File.ReadAllText(filename))){
-                // TODO: Implement Functionality Here
+                while(reader.Peek() != -1) {
+                    string[] lineParts = reader.ReadLine().Split();
+                    char direction = lineParts[0][0];
+                    int distance = int.Parse(lineParts[1]);
 
-                Console.WriteLine("The solution to Part 2 with inputfile: {0} is: {1}", filename, "Put solution here!");
+                    moveRope(points, direction, distance, pointsVisited);
+                }
+
+                Console.WriteLine("The solution to Part 2 with inputfile: {0} is: {1}", filename, pointsVisited.Count);
             }
         }
     }
