@@ -44,10 +44,17 @@ namespace Day11
                 while(reader.Peek() != -1) {
                     reader.ReadLine();
                     string[] itemStrings = reader.ReadLine().Split(':')[1].Trim().Split(new []{", "}, StringSplitOptions.RemoveEmptyEntries);
+                    int[] items = new int[itemStrings.Length];
+                    for (int i = 0; i < itemStrings.Length; i++) {
+                        items[i] = int.Parse(itemStrings[i]);
+                    }
                     string[] operationWhole = reader.ReadLine().Split('=')[1].Split(new []{" "}, StringSplitOptions.RemoveEmptyEntries);
                     char operation = operationWhole[1][0];
                     int operand = int.Parse(operationWhole[2]);
                     int divisor = int.Parse(reader.ReadLine().Split(new []{"by"}, StringSplitOptions.RemoveEmptyEntries)[1]);
+                    int trueMonkey = int.Parse(reader.ReadLine().Split(new []{"monkey"}, StringSplitOptions.RemoveEmptyEntries)[1]);
+                    int falseMonkey = int.Parse(reader.ReadLine().Split(new []{"monkey"}, StringSplitOptions.RemoveEmptyEntries)[1]);
+                    Monkey m = new Monkey(trueMonkey, falseMonkey, divisor, operation, operand, items);
                     
                 }
 
