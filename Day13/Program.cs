@@ -9,14 +9,31 @@ using System.Collections.Generic;
 
 namespace Day13
 {
+    class PacketComparer: IComparer<String> {
+        #region IComparer implementation
+        public int Compare(string p1, string p2) {
+            bool orderDetermined = false;
+            int p1Index = 0;
+            int p2Index = 0;
+            
+            if (Program.AreListsInOrder(ref p1, ref p2, ref p1Index, ref p2Index, ref orderDetermined)) {
+                if (orderDetermined)
+                    return -1;
+                return 0;
+            }
+            return 1;
+        }
+        #endregion
+        
+    }
     class Program
     {
         public static void Main(string[] args) {
             Part1("test.txt");
             Part1("test2.txt");
             Part1("input.txt");
-            //Part2("test.txt");
-            //Part2("input.txt");
+            Part2("test.txt");
+            Part2("input.txt");
 
             Console.Write("Press any key to continue . . . ");
             Console.ReadKey(true);
@@ -51,13 +68,29 @@ namespace Day13
 
         static void Part2(string filename) {
             using(StringReader reader = new StringReader(File.ReadAllText(filename))){
-                // TODO: Implement Functionality Here
-
-                Console.WriteLine("The solution to Part 2 with inputfile: {0} is: {1}", filename, "Put solution here!");
+                List<string> packets = new List<string>();
+                string divider1 = "[[2]]";
+                string divider2 = "[[6]]";
+                
+                while(reader.Peek() != -1 ) {
+                    String packet1 = reader.ReadLine();
+                    String packet2 = reader.ReadLine();
+                    packets.Add(packet1);
+                    packets.Add(packet2);
+                    reader.ReadLine();
+                }
+                packets.Add(divider1);
+                packets.Add(divider2);
+                packets.Sort(new PacketComparer());
+                
+                int index1 = packets.IndexOf(divider1) + 1;
+                int index2 = packets.IndexOf(divider2) + 1;
+                
+                Console.WriteLine("The solution to Part 2 with inputfile: {0} is: {1}", filename, index1*index2);
             }
         }
         
-        static bool AreListsInOrder(ref string packet1, ref string packet2, ref int p1Index, ref int p2Index, ref bool orderDetermined) {
+        public static bool AreListsInOrder(ref string packet1, ref string packet2, ref int p1Index, ref int p2Index, ref bool orderDetermined) {
             orderDetermined = false;
             p1Index += 1;
             p2Index += 1;
@@ -74,10 +107,10 @@ namespace Day13
                     return false;
                 } else if (packet1[p1Index] == ']') {
                     int closeBracketCount = 1;
-                    //if(Char.IsDigit(packet2[p2Index])) orderDetermined = true;
+
                     if(packet2[p2Index] != ']') orderDetermined = true;
                     while(closeBracketCount > 0) {
-                        if(packet2[p2Index] == ']') 
+                        if(packet2[p2Index] == ']')
                             closeBracketCount -=1;
                         else {
                             if (packet2[p2Index] == '[')
@@ -86,9 +119,7 @@ namespace Day13
                         }
                     }
                     return true;
-                } else if (packet1[p1Index] == '[' && /*Char.IsDigit(packet2[p2Index])){ //*/packet2[p2Index] != '[') {
-                    if(!Char.IsDigit(packet2[p2Index]))
-                        p2Index = p2Index;
+                } else if (packet1[p1Index] == '[' && packet2[p2Index] != '[') {
                     packet2 = ConverNumberToList(packet2, p2Index);
                     if(!AreListsInOrder(ref packet1, ref packet2, ref p1Index, ref p2Index, ref orderDetermined))
                         return false;
